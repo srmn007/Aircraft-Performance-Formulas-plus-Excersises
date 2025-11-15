@@ -73,12 +73,17 @@ def CL_To_V_Calc(Mass, rho, S, Cl):
 # TAS → EAS
 def EAS(TAS, rho):
     return TAS * np.sqrt(rho / 1.225)
+
+#----------------------------------------------------------
+# CL -> Lift
+def CL_To_Lift_calc(Cl,V,rho,S):
+    return 0.5 * Cl *rho *S * (V**2)
 #----------------------------------------------------------
 # ----------------------------------------
 # Gam is to take into account the flight path angel gamma
 # ----------------------------------------
 # W --> L
-def Lift_Calc(Mass,gam):
+def Weight_To_Lift_CalC(Mass,gam):
      return Mass *g * np.cos(np.deg2rad(gam))
 #----------------------------------------------------------
 # FR --> FA (Available Thrust)
