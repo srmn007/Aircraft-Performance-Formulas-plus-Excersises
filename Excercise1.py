@@ -125,8 +125,8 @@ def main():
     # ----------------------------------------------------------
     # 2. Max L/D
     # ----------------------------------------------------------
-    _, LDmax_B, _ = Optimal_Val_Max_J_range(m_B*g, S_B, rho, CD0_B, k_B)
-    _, LDmax_F, _ = Optimal_Val_Max_J_range(m_F*g, S_F, rho, CD0_F, k_F)
+    _, LDmax_B, _ =Optimal_Val_Min_T(m_B*g, S_B, rho, CD0_B, k_B)
+    _, LDmax_F, _ = Optimal_Val_Min_T(m_F*g, S_F, rho, CD0_F, k_F)
 
     print("\n=== 2. Maximum L/D ===")
     print(f"B777 max L/D ≈ {LDmax_B:.2f}")
