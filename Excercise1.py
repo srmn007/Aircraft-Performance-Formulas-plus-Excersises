@@ -112,6 +112,8 @@ def main():
     Res_F, Theta_F = Aero_Force_Resultant(L_F, D_F)
 
     print("=== 1. Aerodynamic forces at FL390 ===")
+    print(f"B777 Thrust = {D_B:.2f}")
+    print(f"F16  Thrust = {D_F:.2f}")
     print(f"B777 L/D = {L_B/D_B:.2f}, Resultant={Res_B:.0f} N, Angle={Theta_B:.2f}°")
     print(f"F16  L/D = {L_F/D_F:.2f}, Resultant={Res_F:.0f} N, Angle={Theta_F:.2f}°")
 
@@ -164,16 +166,16 @@ def main():
     # ----------------------------------------------------------
     # 4. Airspeed that minimizes thrust --> CL_opt
     # ----------------------------------------------------------
-    _, _, CLopt_B = Optimal_Val_Min_T(m_B*g, S_B, rho, CD0_B, k_B)
-    _, _, CLopt_F = Optimal_Val_Min_T(m_F*g, S_F, rho, CD0_F, k_F)
+    v_Min_B, L_D_OPT_B, CLopt_B = Optimal_Val_Min_T(m_B*g, S_B, rho, CD0_B, k_B)
+    V_Min_F, L_D_OPT_F, CLopt_F = Optimal_Val_Min_T(m_F*g, S_F, rho, CD0_F, k_F)
 
-    V_opt_B = CL_To_V_Calc(m_B, rho, S_B, CLopt_B)
-    V_opt_F = CL_To_V_Calc(m_F, rho, S_F, CLopt_F)
-
+    #V_min Kan ook^^^^
     print("\n=== 4. Airspeed that minimizes Thrust ===")
-    print(f"B777: V_opt = {V_opt_B:.1f} m/s, EAS = {EAS(V_opt_B, rho):.1f} m/s")
-    print(f"F16 : V_opt = {V_opt_F:.1f} m/s, EAS = {EAS(V_opt_F, rho):.1f} m/s")
-    
+    print(f"B777: V_opt = {v_Min_B:.1f} m/s, EAS = {EAS(v_Min_B, rho):.1f} m/s")
+    print(f"F16 : V_opt = {V_Min_F:.1f} m/s, EAS = {EAS(V_Min_F, rho):.1f} m/s")
+    print(f"B777 : CL/CD Opt = {L_D_OPT_B:.1f}")
+    print(f"F16 : CL/CD Opt = {L_D_OPT_F:.1f}")
+
     
 if __name__ == "__main__":
     main()
