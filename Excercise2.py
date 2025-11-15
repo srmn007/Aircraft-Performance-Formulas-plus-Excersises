@@ -33,9 +33,8 @@ def main():
 
     #To find Max en Minimum speed, look for the intersections of FA, with FR, 
     
-    V_Min_intersect = f.V_Min_FA_FR(f.lbf__N(T_A_FL20*1000,1),Mass*9.81,S,0.029,k,rho_FL20)
-    V_max = f.V_Max_FA_FR(f.lbf__N(T_A_FL20*1000,1),Mass*9.81,S,0.029,k,rho_FL20)
-    
+    V_Min_intersect, V_max = f.V_Int_FA_FR(f.lbf__N(T_A_FL20*1000,1),Mass*9.81,S,0.029,k,rho_FL20)
+
     print(f"The Plane must no go below the stall speed: V stall = {V_Stall} m/s")
     
     plt.figure()
@@ -69,12 +68,8 @@ def main():
     T_A_FL30 = f.Thrust_0_Thrust_FL(22,rho_FL30)
 
     #To find Max en Minimum speed, look for the intersections of FA, with FR, 
-    #adjust tolerance to find two values far from each other
-    
-    idx = f.Find_Match_FA_FR(T_FL30,f.lbf__N(T_A_FL30*1000,1),tol=200)
-    print(idx)
-    V_max = Speed_range[347]
-    V_Min_intersect = Speed_range[45]
+    V_Min_intersect, V_max = f.V_Int_FA_FR(f.lbf__N(T_A_FL30*1000,1),Mass*9.81,S,0.029,k,rho_FL30)
+
     print(f"The Plane must no go below the stall speed: V stall = {V_Stall} m/s")
     
     plt.figure()

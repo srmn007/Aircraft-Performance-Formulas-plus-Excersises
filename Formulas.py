@@ -119,12 +119,11 @@ class f:
     def FA_Calc(Thrust, Mass, gam):
         return Thrust + Mass * f.g * np.sin(np.deg2rad(gam))
      #----------------------------------------------------------
-    # V_max intersection between FR and FA SLF
-    def V_Max_FA_FR(FA,W,S,CD_0,k,rho):
-        return np.sqrt(((FA * W)/(W *S) + (W/S) * np.sqrt((FA/W)**2 -4 *CD_0*k) ) / (rho*CD_0))
-    # V_min intersection between FR and FA SLF
-    def V_Min_FA_FR(FA,W,S,CD_0,k,rho):
-        return np.sqrt(((FA * W)/(W *S) - (W/S) * np.sqrt((FA/W)**2 -4 *CD_0*k) ) / (rho*CD_0))
+    # Returns V, intersections between FR and FA SLF
+    def V_Int_FA_FR(FA,W,S,CD_0,k,rho):
+        V2 = np.sqrt(((FA * W)/(W *S) + (W/S) * np.sqrt((FA/W)**2 -4 *CD_0*k) ) / (rho*CD_0))
+        V1 = np.sqrt(((FA * W)/(W *S) - (W/S) * np.sqrt((FA/W)**2 -4 *CD_0*k) ) / (rho*CD_0))
+        return V1,V2    
     #----------------------------------------------------------
     # Unit Conversions
     # lbf <--> N , x = 1 : lbf -> N
