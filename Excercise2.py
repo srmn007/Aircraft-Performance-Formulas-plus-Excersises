@@ -111,13 +111,15 @@ def main():
     AR = AR_Calc(span,S)
     k = Induced_Drag_Factor_Calc(AR,e)
     cd = Cd_Calc(0.029,k,Cl_Max)
+    FA = lbf__N(22,1) #From Graph interpolated, 22 lbf for N1 = 100%
 
     #@20 000 ft
-    P_FL20 = 465.6 *100
+    P_FL20 = mbar_To_Pa(465.6) 
     T_FL20 = 248.53 
-    rho_FL20 = rho(P_FL20,T_FL20)
-    V_Stall = CL_To_V(Mass,rho_FL20,S,Cl_Max)
-
+    rho_FL20 = rho_Calc(P_FL20,T_FL20)
+    V_Stall = CL_To_V_Calc(Mass,rho_FL20,S,Cl_Max)
+    print(f"V Stall = {V_Stall:.2f}")
+    breakpoint
     Speed_range =np.arange(20,600,1)
         
     Cl_FL20 = V_To_CL(Mass,Speed_range,rho_FL20,S)
@@ -141,42 +143,41 @@ def main():
     plt.show()
 
     #@ 30 000 ft
-        P_FL30 = 300.9 *100
-        T_FL30 = 228.71 
-        rho_FL30 = rho(P_FL30,T_FL30)
-        V_Stall = CL_To_V(Mass,rho_FL30,S,Cl_Max)
+    P_FL30 = 300.9 *100
+    T_FL30 = 228.71 
+    rho_FL30 = rho(P_FL30,T_FL30)
+    V_Stall = CL_To_V(Mass,rho_FL30,S,Cl_Max)
     
-        Cl_FL30 = V_To_CL(Mass,Speed_range,rho_FL30,S)
+    Cl_FL30 = V_To_CL(Mass,Speed_range,rho_FL30,S)
 
-        Cd_FL30 = DragCoeff(0.029,k,Cl_FL30)
+    Cd_FL30 = DragCoeff(0.029,k,Cl_FL30)
 
-        T_FL30 = Thrust(Cd_FL30,rho_FL30,Speed_range,S)
-        T_A_FL30 = 22 * (rho_FL30/1.225)
-        plt.figure()
+    T_FL30 = Thrust(Cd_FL30,rho_FL30,Speed_range,S)
+    T_A_FL30 = 22 * (rho_FL30/1.225)
+    plt.figure()
 
-        plt.plot(Speed_range,T_FL30/4448.221615)
-        plt.vlines(V_Stall, 0, np.max(T_FL30/4448.221615),color='red',label='V_stall')
-        plt.hlines(22,np.min(Speed_range),np.max(Speed_range),color='yellow',label='Thrust available')
-        plt.title("At 30 000 ft")
-        plt.xlabel("TAS [m/s]")
-        plt.grid()
-        plt.legend()
-        plt.ylabel("Thrust klbf")
-        plt.show()
+    plt.plot(Speed_range,T_FL30/4448.221615)
+    plt.vlines(V_Stall, 0, np.max(T_FL30/4448.221615),color='red',label='V_stall')
+    plt.hlines(22,np.min(Speed_range),np.max(Speed_range),color='yellow',label='Thrust available')
+    plt.title("At 30 000 ft")
+    plt.xlabel("TAS [m/s]")
+    plt.grid()
+    plt.legend()
+    plt.ylabel("Thrust klbf")
+    plt.show()
 
     # 2)
-        delta_T = 0.5
-        v1 = 126.4
-        FA = (rho_FL20/1.2250)*26*4448.221615
-        t1 =0
-        while v1 < 158:
-            CL_I = V_To_CL(Mass,v1,rho_FL20,S)
-
-            CD_I = DragCoeff(0.029,k,CL_I)
-            Fr = Thrust(CD_I,rho_FL20,v1,S)
-            Delta_V = delta_T *((FA-Fr)/(Mass))
-            v1 = v1 + Delta_V
-            t1 = t1 + delta_T
+    delta_T = 0.5
+    v1 = 126.4
+    FA = (rho_FL20/1.2250)*26*4448.221615
+    t1 =0
+    while v1 < 158:
+        CL_I = V_To_CL(Mass,v1,rho_FL20,S)
+        CD_I = DragCoeff(0.029,k,CL_I)
+        Fr = Thrust(CD_I,rho_FL20,v1,S)
+        Delta_V = delta_T *((FA-Fr)/(Mass))
+        v1 = v1 + Delta_V
+        t1 = t1 + delta_T
         print(t1)
     
 if __name__ == "__main__":
