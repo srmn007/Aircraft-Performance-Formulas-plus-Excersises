@@ -67,7 +67,7 @@ class f:
     @staticmethod
     def Optimal_Val_Min_P(L, S, rho, CD_0, k):
         v_min = np.sqrt((L * 2 * np.sqrt(k)) / (S * rho * np.sqrt(3 * CD_0)))
-        CL_CD_OPT = 0.25 * (27 / (k**3 * CD_0))**0.25
+        CL_CD_OPT = 0.25 * (27 / ((k**3) * CD_0))**0.25
         CL_OPT = np.sqrt((3 * CD_0) / k)
         return v_min, CL_CD_OPT, CL_OPT
 
