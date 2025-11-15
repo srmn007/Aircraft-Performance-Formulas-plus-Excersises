@@ -18,6 +18,10 @@ def Mach_To_V_Calc(M, rho, T):
 def Thrust_Calc(Cd, rho, V, S):
     return Cd * (0.5 * rho * V**2 * S)
 #----------------------------------------------------------
+# Thrust --> V
+def Thrust_To_V(Thrust, Cd, rho, S):
+    return np.sqrt( (2 * Thrust) /(S * Cd))
+#----------------------------------------------------------
 # Lift + Drag → Aerodynamic resultant
 def Aero_Force_Resultant(L, D):
     Res = np.sqrt(L**2 + D**2)
@@ -100,3 +104,7 @@ def lbf__N(Force,x):
 # mbar --> Pa
 def mbar_To_Pa(mbar):
     return mbar * 100
+# ----------------------------------------
+# Thrust @FL00  --> Thrust @FLXX
+def Thrust_0_Thrust_FL(Thrust,rho):
+    return Thrust * np.sqrt(rho/1.2250)

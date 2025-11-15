@@ -18,6 +18,10 @@ def Mach_To_V_Calc(M, rho, T):
 def Thrust_Calc(Cd, rho, V, S):
     return Cd * (0.5 * rho * V**2 * S)
 #----------------------------------------------------------
+# Thrust --> V
+def Thrust_To_V(Thrust, Cd, rho, S):
+    return np.sqrt( (2 * Thrust) /(S * Cd))
+#----------------------------------------------------------
 # Lift + Drag → Aerodynamic resultant
 def Aero_Force_Resultant(L, D):
     Res = np.sqrt(L**2 + D**2)
@@ -100,6 +104,10 @@ def lbf__N(Force,x):
 # mbar --> Pa
 def mbar_To_Pa(mbar):
     return mbar * 100
+# ----------------------------------------
+# Thrust @FL00  --> Thrust @FLXX
+def Thrust_0_Thrust_FL(Thrust,rho):
+    return Thrust * np.sqrt(rho/1.2250)
 
 def main():
     #Given 
@@ -119,15 +127,15 @@ def main():
     rho_FL20 = rho_Calc(P_FL20,T_FL20)
     V_Stall = CL_To_V_Calc(Mass,rho_FL20,S,Cl_Max)
     print(f"V Stall = {V_Stall:.2f}")
-    breakpoint
+    
     Speed_range =np.arange(20,600,1)
         
-    Cl_FL20 = V_To_CL(Mass,Speed_range,rho_FL20,S)
+    Cl_FL20 = V_To_CL_Calc(Mass,Speed_range,rho_FL20,S)
 
-    Cd_FL20 = DragCoeff(0.029,k,Cl_FL20)
+    Cd_FL20 = Cd_Calc(0.029,k,Cl_FL20)
 
-    T_FL20 = Thrust(Cd_FL20,rho_FL20,Speed_range,S)
-    T_A_FL20 = 22 *rho_FL20/1.2250
+    T_FL20 = Thrust_Calc(Cd_FL20,rho_FL20,Speed_range,S)
+    T_A_FL20 = Thrust_0_Thrust_FL(22,rho_FL20)
 
       
     plt.figure()
@@ -141,7 +149,9 @@ def main():
     plt.legend()
     plt.grid()
     plt.show()
-
+    T_A_FL20 = lbf__N(T_A_FL20*1000,1) #In the graph it is given in klbf
+    V_Max_FL20 = Thrust_To_V(T_A_FL20,Cd_FL20,rho_FL20,S)
+    print(V_Max_FL20)
     #@ 30 000 ft
     P_FL30 = 300.9 *100
     T_FL30 = 228.71 
