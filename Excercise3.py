@@ -1,78 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from Formulas import f
 
-g = 9.81          # Gravity
-R = 287.0         # Gas constant for air
-gamma = 1.4       # Specific heat ratio
-
-#----------------------------------------------------------
-# TAS → Lift Coefficient
-def V_To_CL_Calc(Mass, V, rho, S):
-    return (Mass * g) / (0.5 * rho * V**2 * S)
-#----------------------------------------------------------
-# Mach → TAS
-def Mach_To_V_Calc(M, rho, T):
-    return M * np.sqrt(R * 1.4 * T)
-#----------------------------------------------------------
-# Thrust = Drag
-def Thrust_Calc(Cd, rho, V, S):
-    return Cd * (0.5 * rho * V**2 * S)
-#----------------------------------------------------------
-# Lift + Drag → Aerodynamic resultant
-def Aero_Force_Resultant(L, D):
-    Res = np.sqrt(L**2 + D**2)
-    Theta = np.degrees(np.atan(D / L))
-    return Res, Theta
-#----------------------------------------------------------
-# Drag coefficient from CD0 + k CL²
-def Cd_Calc(CD_0, k, Cl):
-    return CD_0 + k * (Cl**2)
-#----------------------------------------------------------
-# ----------------------------------------
-# Optimal Values; Jet-Max Range
-# ----------------------------------------
-def Optimal_Val_Max_J_range(L, S, rho, CD_0, k):
-    v_min = np.sqrt((L * 2 * np.sqrt(3 * k)) / (S * rho * np.sqrt(CD_0)))
-    CL_CD_OPT = 3 / (4 * (3 * k * CD_0**3)**0.25)
-    CL_Opt = np.sqrt(CD_0 / (3 * k))
-    return v_min, CL_CD_OPT, CL_Opt
-
-#----------------------------------------------------------
-# Optimal Values Minimal Thrust; Prop-Max Range, Jet-Max Endurance
-# ----------------------------------------
-def Optimal_Val_Min_T(L, S, rho, CD_0, k):
-    v_min = np.sqrt((L * 2 * np.sqrt(k)) / (S * rho * np.sqrt(CD_0)))
-    CL_CD_OPT = 1 / np.sqrt(4 * k * CD_0)
-    CL_Opt = np.sqrt(CD_0 / k)
-    return v_min, CL_CD_OPT, CL_Opt
-#----------------------------------------------------------
-# Optimal Values for Minimal Power; Prop – Max Endurance
-def Optimal_Val_Min_P(L, S, rho, CD_0, k):
-    v_min = np.sqrt((L * 2 * np.sqrt(k)) / (S * rho * np.sqrt(3 * CD_0)))
-    CL_CD_OPT = 0.25 * (27 / (k**3 * CD_0))**0.25
-    CL_OPT = np.sqrt((3 * CD_0) / k)
-    return v_min, CL_CD_OPT, CL_OPT
-#----------------------------------------------------------
-# Density from ISA
-def rho_Calc(P, T):
-    return P / (R * T)
-#----------------------------------------------------------
-# Aspect ratio
-def AR_Calc(span, S):
-    return (span**2) / S   
-#----------------------------------------------------------
-# Induced drag factor
-def Induced_Drag_Factor_Calc(AR, e):
-    return 1 / (np.pi * e * AR)
-#----------------------------------------------------------
-# CL → TAS
-def CL_To_V_Calc(Mass, rho, S, Cl):
-    return np.sqrt(Mass * g / (0.5 * rho * Cl * S))
-
-#----------------------------------------------------------
-# TAS → EAS
-def EAS(TAS, rho):
-    return TAS * np.sqrt(rho / 1.225)
 
 def main():
         #Given
@@ -80,19 +9,16 @@ def main():
         S = 65
         Mass = 25883 
         e = 0.9
-        AspR =AR(span,S)
-        k = inducedDragCoeff(AspR,e)
+        AspR =f.AR_Calc(span,S)
+        k = f.Induced_Drag_Factor_Calc(AspR,e)
         Cd_0 = 0.029
         Speed_Range = np.arange(30,400,1)
         rho_FL0 = 1.2250
 
         #Calculations
-        Cl_3 = V_To_CL(Mass,Speed_Range,rho_FL0,S)
-
-        Cd_3 = DragCoeff(Cd_0,k,Cl_3)
-
-        Fr = Thrust(Cd_3,rho_FL0,Speed_Range,S)
-
+        Cl_3 = f.V_To_CL_Calc(Mass,Speed_Range,rho_FL0,S)
+        Cd_3 = f.Cd_Calc(Cd_0,k,Cl_3)
+        Fr = f.Thrust_Calc(Cd_3,rho_FL0,Speed_Range,S)
         Pr = Fr*Speed_Range
 
         V_Min_T = np.sqrt((Mass*9.81*2*np.sqrt(k/Cd_0))/(S*(rho_FL0)))
