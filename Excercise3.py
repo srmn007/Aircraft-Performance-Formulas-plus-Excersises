@@ -75,123 +75,6 @@ def EAS(TAS, rho):
     return TAS * np.sqrt(rho / 1.225)
 
 def main():
-    
-    def Exercise1():
-    #BOEING 777_200    
-        S_B = 427.8 #m^2
-        Mass_B = 304000 #kg
-        P = 196.8 #mbar
-        P_pa = P*100 #Pa
-        T = 216.83
-        L = Mass_B * 9.81
-        #Calculations
-        rho_E = rho_Calc(P_pa,T)
-        V_B = Mach_To_V_Calc(0.82,rho_E,216.83)
-        CL_B = V_To_CL_Calc(Mass_B,V_B,rho_E,S_B)
-        CD_B = Cd_Calc(0.018,0.045,CL_B)
-
-        FR_B = Thrust_Calc(CD_B,rho_E,V_B,S_B)
-        F_B,theta = Aero_Force_Resultant(L,FR_B)
-        ratio_CL_CD = Mass_B*9.81/FR_B
-        v_min_B, CL_CD_OPT_B, CL_Opt_B = Optimal_Val_Min_T(L,S_B,rho_E,0.045,0.018)
-
-    #F_16
-        S_F16 = 27.87
-        Mass_F16 = 11000
-        L_F16 =Mass_F16*9.81
-        CL_F16 = V_To_CL_Calc(Mass_F16,V_B,rho_E,S_F16)
-        CD_F16 = Cd_Calc(0.018,0.045,CL_F16)
-
-        FR_F16 = Thrust_Calc(CD_F16,rho_E,V_B,S_F16)
-      
-        F_F16,theta_F16 = Aero_Force_Resultant(L_F16,FR_F16)
-        ratio_CL_CD = Mass_F16*9.81/FR_F16
-    #2)
-        CL_CD_MAX_B = 1/np.sqrt(4*0.045*0.018)    
-        CL_CD_MAX_F16 = 1/np.sqrt(4*0.0117*0.0169)
-
-    #4)
-        
-        v_min_B, CL_CD_OPT_B, CL_Opt_B = Optimal_Val_Min_T(L,S_B,rho_E,0.045,0.018)
-        Cl_Min_Drag = V_To_CL_Calc(Mass_B,v_min_B,rho_E,)
-    def Exercise2():
-        span = 20 #m
-        S = 65 #m^2
-        Mass = 25833
-        e =0.9
-        Cl_Max =1.16
-        k =1/(np.pi*e*AR(span,S))
-
-        cd = DragCoeff(0.029,k,Cl_Max)
-    #@ Sea Level
-
-    #@20 000 ft
-        P_FL20 = 465.6 *100
-        T_FL20 = 248.53 
-        rho_FL20 = rho(P_FL20,T_FL20)
-        V_Stall = CL_To_V(Mass,rho_FL20,S,Cl_Max)
-
-        Speed_range =np.arange(20,600,1)
-        
-        Cl_FL20 = V_To_CL(Mass,Speed_range,rho_FL20,S)
-
-        Cd_FL20 = DragCoeff(0.029,k,Cl_FL20)
-
-        T_FL20 = Thrust(Cd_FL20,rho_FL20,Speed_range,S)
-        T_A_FL20 = 22 *rho_FL20/1.2250
-
-      
-        plt.figure()
-
-        plt.plot(Speed_range,T_FL20/4448.221615,label='thrust required')
-        plt.vlines(V_Stall, 0, np.max(T_FL20/4448.221615),color='red',label='V_stall')
-        plt.hlines(T_A_FL20,np.min(Speed_range),np.max(Speed_range),color='yellow',label='Thrust available')
-        plt.title("At 20 000 ft")
-        plt.xlabel("TAS [m/s]")
-        plt.ylabel("Thrust klbf")
-        plt.legend()
-        plt.grid()
-        plt.show()
-
-    #@ 30 000 ft
-        P_FL30 = 300.9 *100
-        T_FL30 = 228.71 
-        rho_FL30 = rho(P_FL30,T_FL30)
-        V_Stall = CL_To_V(Mass,rho_FL30,S,Cl_Max)
-    
-        Cl_FL30 = V_To_CL(Mass,Speed_range,rho_FL30,S)
-
-        Cd_FL30 = DragCoeff(0.029,k,Cl_FL30)
-
-        T_FL30 = Thrust(Cd_FL30,rho_FL30,Speed_range,S)
-        T_A_FL30 = 22 * (rho_FL30/1.225)
-        plt.figure()
-
-        plt.plot(Speed_range,T_FL30/4448.221615)
-        plt.vlines(V_Stall, 0, np.max(T_FL30/4448.221615),color='red',label='V_stall')
-        plt.hlines(22,np.min(Speed_range),np.max(Speed_range),color='yellow',label='Thrust available')
-        plt.title("At 30 000 ft")
-        plt.xlabel("TAS [m/s]")
-        plt.grid()
-        plt.legend()
-        plt.ylabel("Thrust klbf")
-        plt.show()
-
-    # 2)
-        delta_T = 0.5
-        v1 = 126.4
-        FA = (rho_FL20/1.2250)*26*4448.221615
-        t1 =0
-        while v1 < 158:
-            CL_I = V_To_CL(Mass,v1,rho_FL20,S)
-
-            CD_I = DragCoeff(0.029,k,CL_I)
-            Fr = Thrust(CD_I,rho_FL20,v1,S)
-            Delta_V = delta_T *((FA-Fr)/(Mass))
-            v1 = v1 + Delta_V
-            t1 = t1 + delta_T
-        print(t1)
-    def Exercise3():
         #Given
         span = 20
         S = 65
@@ -245,6 +128,6 @@ def main():
         # Adjust layout
         plt.tight_layout()
         plt.show()    
-    Exercise1()
+
 if __name__ == "__main__":
     main()

@@ -75,46 +75,6 @@ def EAS(TAS, rho):
     return TAS * np.sqrt(rho / 1.225)
 
 def main():
-    
-    def Exercise1():
-    #BOEING 777_200    
-        S_B = 427.8 #m^2
-        Mass_B = 304000 #kg
-        P = 196.8 #mbar
-        P_pa = P*100 #Pa
-        T = 216.83
-        L = Mass_B * 9.81
-        #Calculations
-        rho_E = rho_Calc(P_pa,T)
-        V_B = Mach_To_V_Calc(0.82,rho_E,216.83)
-        CL_B = V_To_CL_Calc(Mass_B,V_B,rho_E,S_B)
-        CD_B = Cd_Calc(0.018,0.045,CL_B)
-
-        FR_B = Thrust_Calc(CD_B,rho_E,V_B,S_B)
-        F_B,theta = Aero_Force_Resultant(L,FR_B)
-        ratio_CL_CD = Mass_B*9.81/FR_B
-        v_min_B, CL_CD_OPT_B, CL_Opt_B = Optimal_Val_Min_T(L,S_B,rho_E,0.045,0.018)
-
-    #F_16
-        S_F16 = 27.87
-        Mass_F16 = 11000
-        L_F16 =Mass_F16*9.81
-        CL_F16 = V_To_CL_Calc(Mass_F16,V_B,rho_E,S_F16)
-        CD_F16 = Cd_Calc(0.018,0.045,CL_F16)
-
-        FR_F16 = Thrust_Calc(CD_F16,rho_E,V_B,S_F16)
-      
-        F_F16,theta_F16 = Aero_Force_Resultant(L_F16,FR_F16)
-        ratio_CL_CD = Mass_F16*9.81/FR_F16
-    #2)
-        CL_CD_MAX_B = 1/np.sqrt(4*0.045*0.018)    
-        CL_CD_MAX_F16 = 1/np.sqrt(4*0.0117*0.0169)
-
-    #4)
-        
-        v_min_B, CL_CD_OPT_B, CL_Opt_B = Optimal_Val_Min_T(L,S_B,rho_E,0.045,0.018)
-        Cl_Min_Drag = V_To_CL_Calc(Mass_B,v_min_B,rho_E,)
-    def Exercise2():
         span = 20 #m
         S = 65 #m^2
         Mass = 25833
@@ -191,60 +151,6 @@ def main():
             v1 = v1 + Delta_V
             t1 = t1 + delta_T
         print(t1)
-    def Exercise3():
-        #Given
-        span = 20
-        S = 65
-        Mass = 25883 
-        e = 0.9
-        AspR =AR(span,S)
-        k = inducedDragCoeff(AspR,e)
-        Cd_0 = 0.029
-        Speed_Range = np.arange(30,400,1)
-        rho_FL0 = 1.2250
-
-        #Calculations
-        Cl_3 = V_To_CL(Mass,Speed_Range,rho_FL0,S)
-
-        Cd_3 = DragCoeff(Cd_0,k,Cl_3)
-
-        Fr = Thrust(Cd_3,rho_FL0,Speed_Range,S)
-
-        Pr = Fr*Speed_Range
-
-        V_Min_T = np.sqrt((Mass*9.81*2*np.sqrt(k/Cd_0))/(S*(rho_FL0)))
-        Fr_min = Mass*9.81/(np.max(Cl_3/Cd_3))
-
-        V_Min_P = np.sqrt((Mass*9.81*2*np.sqrt(k/(3*Cd_0)))/(S*(rho_FL0)))
-        Pr_min = Mass*9.81/(np.max((Cl_3**3/2)/Cd_3))
-
-        print("the minimum thrust required",Fr_min)
-        print("the minimum power required",Pr_min)
-        print("the minimum thrust required velocity",V_Min_T)
-        print("the minimum power required velocity",V_Min_P)
-        ratio_V_minFR_MinPR = V_Min_P/V_Min_T
-        print("the ratio of speed at minimal power on the speed at minimal thrust;",ratio_V_minFR_MinPR)
-        print("the ratio of the thrust required at minimal power on the thrust required at minimal thrust;",)
-
-        fig, axs = plt.subplots(1, 2, figsize=(12, 5))  # adjust figsize as needed
-
-        # Left subplot: Required Thrust
-        axs[0].plot(Speed_Range * 1.94384, Fr / 1000, color='blue')
-        axs[0].set_xlabel('TAS [knots]')
-        axs[0].set_ylabel('Required Thrust [kN]')
-        axs[0].grid(True)
-        axs[0].set_title('Required Thrust vs TAS')
-
-        # Right subplot: Required Power
-        axs[1].plot(Speed_Range * 1.94384, Pr / 1e6, color='red')
-        axs[1].set_xlabel('TAS [knots]')
-        axs[1].set_ylabel('Required Power [MW]')
-        axs[1].grid(True)
-        axs[1].set_title('Required Power vs TAS')
-
-        # Adjust layout
-        plt.tight_layout()
-        plt.show()    
-    Exercise1()
+    
 if __name__ == "__main__":
     main()
