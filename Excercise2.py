@@ -12,13 +12,14 @@ def main():
     AR = f.AR_Calc(span,S)
     k = f.Induced_Drag_Factor_Calc(AR,e)
     cd = f.Cd_Calc(0.029,k,Cl_Max)
-    FA = f.lbf__N(22,1) #From Graph interpolated, 22 lbf for N1 = 100%
 
     #@20 000 ft
     P_FL20 = f.mbar_To_Pa(465.6) 
     T_FL20 = 248.53 
     rho_FL20 = f.rho_Calc(P_FL20,T_FL20)
     V_Stall = f.CL_To_V_Calc(Mass,rho_FL20,S,Cl_Max)
+    L_FL20 = f.Weight_To_Lift_CalC(Mass,0)
+
     print(f"V Stall = {V_Stall:.2f}")
     
     Speed_range =np.arange(20,600,1)
@@ -28,13 +29,22 @@ def main():
     Cd_FL20 = f.Cd_Calc(0.029,k,Cl_FL20)
 
     T_FL20 = f.Thrust_Calc(Cd_FL20,rho_FL20,Speed_range,S)
+
     T_A_FL20 = f.Thrust_0_Thrust_FL(22,rho_FL20)
 
-      
+    #To find Max en Minimum speed, look for the intersections of FA, with FR, 
+    #adjust tolerance to find two values far from each other
+    idx = f.Find_Match_FA_FR(T_FL20,f.lbf__N(T_A_FL20*1000,1),tol=400)
+    print(idx)
+    V_max = Speed_range[317]
+    V_Min_intersect = Speed_range[30]
+    print(f"The Plane must no go below the stall speed: V stall = {V_Stall} m/s")
+    
     plt.figure()
-
-    plt.plot(Speed_range,T_FL20/4448.221615,label='thrust required')
-    plt.vlines(V_Stall, 0, np.max(T_FL20/4448.221615),color='red',label='V_stall')
+    plt.plot(Speed_range,f.lbf__N(T_FL20/1000,-1),label='thrust required')
+    plt.vlines(V_Stall, 0, np.max(f.lbf__N(T_FL20/1000,-1)),color='red',label='V_stall')
+    plt.vlines(V_Min_intersect, 0, np.max(f.lbf__N(T_FL20/1000,-1)),color='black',label='V_min_intersect')
+    plt.vlines(V_max, 0, np.max(f.lbf__N(T_FL20/1000,-1)),color='green',label='V_Max')
     plt.hlines(T_A_FL20,np.min(Speed_range),np.max(Speed_range),color='yellow',label='Thrust available')
     plt.title("At 20 000 ft")
     plt.xlabel("TAS [m/s]")
@@ -42,31 +52,46 @@ def main():
     plt.legend()
     plt.grid()
     plt.show()
-    T_A_FL20 = f.lbf__N(T_A_FL20*1000,1) #In the graph it is given in klbf
-    V_Max_FL20 = f.Thrust_To_V(T_A_FL20,Cd_FL20,rho_FL20,S)
+
     
+
     #@ 30 000 ft
-    P_FL30 = 300.9 *100
+    P_FL30 = f.mbar_To_Pa(300.9) 
     T_FL30 = 228.71 
-    rho_FL30 = rho(P_FL30,T_FL30)
-    V_Stall = CL_To_V(Mass,rho_FL30,S,Cl_Max)
+    rho_FL30 = f.rho_Calc(P_FL30,T_FL30)
     
-    Cl_FL30 = V_To_CL(Mass,Speed_range,rho_FL30,S)
+    V_Stall = f.CL_To_V_Calc(Mass,rho_FL30,S,Cl_Max)
+    L_FL30 = f.Weight_To_Lift_CalC(Mass,0)
 
-    Cd_FL30 = DragCoeff(0.029,k,Cl_FL30)
+    print(f"V Stall = {V_Stall:.2f}")
+            
+    Cl_FL30 = f.V_To_CL_Calc(Mass,Speed_range,rho_FL30,S)
 
-    T_FL30 = Thrust(Cd_FL30,rho_FL30,Speed_range,S)
-    T_A_FL30 = 22 * (rho_FL30/1.225)
+    Cd_FL30 = f.Cd_Calc(0.029,k,Cl_FL30)
+
+    T_FL30 = f.Thrust_Calc(Cd_FL30,rho_FL30,Speed_range,S)
+
+    T_A_FL30 = f.Thrust_0_Thrust_FL(22,rho_FL30)
+
+    #To find Max en Minimum speed, look for the intersections of FA, with FR, 
+    #adjust tolerance to find two values far from each other
+    idx = f.Find_Match_FA_FR(T_FL30,f.lbf__N(T_A_FL30*1000,1),tol=200)
+    print(idx)
+    V_max = Speed_range[347]
+    V_Min_intersect = Speed_range[45]
+    print(f"The Plane must no go below the stall speed: V stall = {V_Stall} m/s")
+    
     plt.figure()
-
-    plt.plot(Speed_range,T_FL30/4448.221615)
-    plt.vlines(V_Stall, 0, np.max(T_FL30/4448.221615),color='red',label='V_stall')
-    plt.hlines(22,np.min(Speed_range),np.max(Speed_range),color='yellow',label='Thrust available')
+    plt.plot(Speed_range,f.lbf__N(T_FL30/1000,-1),label='thrust required')
+    plt.vlines(V_Stall, 0, np.max(f.lbf__N(T_FL30/1000,-1)),color='red',label='V_stall')
+    plt.vlines(V_Min_intersect, 0, np.max(f.lbf__N(T_FL30/1000,-1)),color='black',label='V_min_intersect')
+    plt.vlines(V_max, 0, np.max(f.lbf__N(T_FL30/1000,-1)),color='green',label='V_Max')
+    plt.hlines(T_A_FL30,np.min(Speed_range),np.max(Speed_range),color='yellow',label='Thrust available')
     plt.title("At 30 000 ft")
     plt.xlabel("TAS [m/s]")
-    plt.grid()
-    plt.legend()
     plt.ylabel("Thrust klbf")
+    plt.legend()
+    plt.grid()
     plt.show()
 
     # 2)
@@ -75,13 +100,14 @@ def main():
     FA = (rho_FL20/1.2250)*26*4448.221615
     t1 =0
     while v1 < 158:
-        CL_I = V_To_CL(Mass,v1,rho_FL20,S)
-        CD_I = DragCoeff(0.029,k,CL_I)
-        Fr = Thrust(CD_I,rho_FL20,v1,S)
+        CL_I = f.V_To_CL_Calc(Mass,v1,rho_FL20,S)
+        CD_I = f.Cd_Calc(0.029,k,CL_I)
+        Fr = f.Thrust_Calc(CD_I,rho_FL20,v1,S)
         Delta_V = delta_T *((FA-Fr)/(Mass))
         v1 = v1 + Delta_V
         t1 = t1 + delta_T
-        print(t1)
+        
+    print(f"Time to Accelerate:{t1} s")
     
 if __name__ == "__main__":
     main()
