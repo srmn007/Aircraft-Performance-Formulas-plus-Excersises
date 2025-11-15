@@ -93,9 +93,9 @@ def FA_Calc(Thrust,Mass,gam):
 # ----------------------------------------
 # Unit Conversions
 # ----------------------------------------
-# lbf --> N
-def lbf_To_N(lbf):
-    return lbf *4.4482216153
+# lbf <--> N , x = 1 : lbf -> n
+def lbf__N(Force,x):
+    return Force *(4.4482216153**x)
 # ----------------------------------------
 # mbar --> Pa
 def mbar_To_Pa(mbar):
