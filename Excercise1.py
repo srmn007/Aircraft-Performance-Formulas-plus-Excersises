@@ -73,6 +73,10 @@ def CL_To_V_Calc(Mass, rho, S, Cl):
 # TAS → EAS
 def EAS(TAS, rho):
     return TAS * np.sqrt(rho / 1.225)
+#----------------------------------------------------------
+# W --> L
+def Lift_Calc(Mass,gam):
+     return Mass *g * np.cos(np.deg2rad(gam))
 
 def main():
     
@@ -102,13 +106,14 @@ def main():
     CL_B = V_To_CL_Calc(m_B, V, rho, S_B)
     CD_B = Cd_Calc(CD0_B, k_B, CL_B)
     D_B = Thrust_Calc(CD_B, rho, V, S_B)
-    L_B = m_B * g
+    L_B = Lift_Calc(m_B,0)
+
     Res_B, Theta_B = Aero_Force_Resultant(L_B, D_B)
 
     CL_F = V_To_CL_Calc(m_F, V, rho, S_F)
     CD_F = Cd_Calc(CD0_F, k_F, CL_F)
     D_F = Thrust_Calc(CD_F, rho, V, S_F)
-    L_F = m_F * g
+    L_F = Lift_Calc(m_F,0)
     Res_F, Theta_F = Aero_Force_Resultant(L_F, D_F)
 
     print("=== 1. Aerodynamic forces at FL390 ===")

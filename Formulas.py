@@ -73,6 +73,7 @@ def CL_To_V_Calc(Mass, rho, S, Cl):
 # TAS → EAS
 def EAS(TAS, rho):
     return TAS * np.sqrt(rho / 1.225)
-
-if __name__ == "__main__":
-    main()
+#----------------------------------------------------------
+# W --> L
+def Lift_Calc(Mass,gam):
+     return Mass *g * np.cos(np.deg2rad(gam))
