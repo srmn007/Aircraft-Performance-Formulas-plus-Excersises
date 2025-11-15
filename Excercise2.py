@@ -74,44 +74,71 @@ def CL_To_V_Calc(Mass, rho, S, Cl):
 def EAS(TAS, rho):
     return TAS * np.sqrt(rho / 1.225)
 
-def main():
-        span = 20 #m
-        S = 65 #m^2
-        Mass = 25833
-        e =0.9
-        Cl_Max =1.16
-        k =1/(np.pi*e*AR(span,S))
+#----------------------------------------------------------
+# CL -> Lift
+def CL_To_Lift_calc(Cl,V,rho,S):
+    return 0.5 * Cl *rho *S * (V**2)
+#----------------------------------------------------------
+# ----------------------------------------
+# Gam is to take into account the flight path angel gamma
+# ----------------------------------------
+# W --> L
+def Weight_To_Lift_CalC(Mass,gam):
+     return Mass *g * np.cos(np.deg2rad(gam))
+#----------------------------------------------------------
+# FR --> FA (Available Thrust)
+def FA_Calc(Thrust,Mass,gam):
+     return Thrust + Mass * g * np.sin(np.deg2rad(gam))
+#----------------------------------------------------------
+# ----------------------------------------
+# Unit Conversions
+# ----------------------------------------
+# lbf --> N
+def lbf_To_N(lbf):
+    return lbf *4.4482216153
+# ----------------------------------------
+# mbar --> Pa
+def mbar_To_Pa(mbar):
+    return mbar * 100
 
-        cd = DragCoeff(0.029,k,Cl_Max)
-    #@ Sea Level
+def main():
+    #Given 
+    span = 20 #m
+    S = 65 #m^2
+    Mass = 25833
+    e  = 0.9
+    Cl_Max =1.16
+    AR = AR_Calc(span,S)
+    k = Induced_Drag_Factor_Calc(AR,e)
+    cd = Cd_Calc(0.029,k,Cl_Max)
 
     #@20 000 ft
-        P_FL20 = 465.6 *100
-        T_FL20 = 248.53 
-        rho_FL20 = rho(P_FL20,T_FL20)
-        V_Stall = CL_To_V(Mass,rho_FL20,S,Cl_Max)
+    P_FL20 = 465.6 *100
+    T_FL20 = 248.53 
+    rho_FL20 = rho(P_FL20,T_FL20)
+    V_Stall = CL_To_V(Mass,rho_FL20,S,Cl_Max)
 
-        Speed_range =np.arange(20,600,1)
+    Speed_range =np.arange(20,600,1)
         
-        Cl_FL20 = V_To_CL(Mass,Speed_range,rho_FL20,S)
+    Cl_FL20 = V_To_CL(Mass,Speed_range,rho_FL20,S)
 
-        Cd_FL20 = DragCoeff(0.029,k,Cl_FL20)
+    Cd_FL20 = DragCoeff(0.029,k,Cl_FL20)
 
-        T_FL20 = Thrust(Cd_FL20,rho_FL20,Speed_range,S)
-        T_A_FL20 = 22 *rho_FL20/1.2250
+    T_FL20 = Thrust(Cd_FL20,rho_FL20,Speed_range,S)
+    T_A_FL20 = 22 *rho_FL20/1.2250
 
       
-        plt.figure()
+    plt.figure()
 
-        plt.plot(Speed_range,T_FL20/4448.221615,label='thrust required')
-        plt.vlines(V_Stall, 0, np.max(T_FL20/4448.221615),color='red',label='V_stall')
-        plt.hlines(T_A_FL20,np.min(Speed_range),np.max(Speed_range),color='yellow',label='Thrust available')
-        plt.title("At 20 000 ft")
-        plt.xlabel("TAS [m/s]")
-        plt.ylabel("Thrust klbf")
-        plt.legend()
-        plt.grid()
-        plt.show()
+    plt.plot(Speed_range,T_FL20/4448.221615,label='thrust required')
+    plt.vlines(V_Stall, 0, np.max(T_FL20/4448.221615),color='red',label='V_stall')
+    plt.hlines(T_A_FL20,np.min(Speed_range),np.max(Speed_range),color='yellow',label='Thrust available')
+    plt.title("At 20 000 ft")
+    plt.xlabel("TAS [m/s]")
+    plt.ylabel("Thrust klbf")
+    plt.legend()
+    plt.grid()
+    plt.show()
 
     #@ 30 000 ft
         P_FL30 = 300.9 *100

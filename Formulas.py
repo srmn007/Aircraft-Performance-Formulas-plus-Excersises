@@ -89,3 +89,14 @@ def Weight_To_Lift_CalC(Mass,gam):
 # FR --> FA (Available Thrust)
 def FA_Calc(Thrust,Mass,gam):
      return Thrust + Mass * g * np.sin(np.deg2rad(gam))
+#----------------------------------------------------------
+# ----------------------------------------
+# Unit Conversions
+# ----------------------------------------
+# lbf --> N
+def lbf_To_N(lbf):
+    return lbf *4.4482216153
+# ----------------------------------------
+# mbar --> Pa
+def mbar_To_Pa(mbar):
+    return mbar * 100
