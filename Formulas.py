@@ -8,13 +8,13 @@ class f:
     #----------------------------------------------------------
     # TAS → Lift Coefficient
     @staticmethod
-    def V_To_CL_Calc(Mass, V, rho, S):
-        return (Mass * f.g) / (0.5 * rho * V**2 * S)
+    def V_To_CL_Calc(Mass, V, rho, S,gam=0):
+        return (Mass * f.g * np.cos(np.deg2rad(gam))) / (0.5 * rho * V**2 * S)
 
     #----------------------------------------------------------
     # Mach → TAS
     @staticmethod
-    def Mach_To_V_Calc(M, rho, T):
+    def Mach_To_V_Calc(M, T):
         return M * np.sqrt(f.R * f.gamma * T)
 
     #----------------------------------------------------------
@@ -42,6 +42,7 @@ class f:
     @staticmethod
     def Cd_Calc(CD_0, k, Cl):
         return CD_0 + k * (Cl**2)
+    #----------------------------------------------------------
 
     #----------------------------------------------------------
     # Optimal Values; Jet-Max Range
@@ -89,11 +90,12 @@ class f:
         return 1 / (np.pi * e * AR)
 
     #----------------------------------------------------------
-    # CL → TAS
+    # CL → TAS, gam == Flight Path Angle in degress
     @staticmethod
-    def CL_To_V_Calc(Mass, rho, S, Cl):
-        return np.sqrt(Mass * f.g / (0.5 * rho * Cl * S))
-
+    def CL_To_V_Calc(Mass, rho, S, Cl,gam=0):
+        
+        return np.sqrt((Mass * f.g * np.cos(np.deg2rad(gam))) / (0.5 * rho * Cl * S))
+        
     #----------------------------------------------------------
     # TAS → EAS
     @staticmethod
