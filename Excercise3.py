@@ -29,6 +29,13 @@ def main():
             #Calculate Minimal Speed, Table in course Note
             V_Min_T,CL_CD_Min_T,CL_Min_T = f.Optimal_Val_Min_T(Mass*9.81,S,rho_FL0,Cd_0,k) 
             V_Min_P,CL_CD_Min_P,CL_Min_P = f.Optimal_Val_Min_P(Mass*9.81,S,rho_FL0,Cd_0,k)
+            #-----------------
+            """
+            #CL/CD of MIN P is Cl^3/2/Cd, to get CL/CD do as follows:
+                 Cd_P = Cd_0 + k *(CL_min_P)**2
+            """
+            Cd_P = f.Cd_Calc(Cd_0,k,CL_Min_P)
+            #-----------------
 
             print(f"the minimum thrust required {Fr_min:.3f} N")
             print(f"the minimum power required {Pr_min:.3f} W")
@@ -41,10 +48,10 @@ def main():
             Pr_At_Min_Fr = Fr_min * V_Min_T
             print(f"the ratio of the power required at minimal power on the power required at minimal thrust: {Pr_min / Pr_At_Min_Fr:.3f}")
             print(f"the ratio of the lift coefficient at minimal power on the lift coefficient at minimal thrust: {CL_Min_P / CL_Min_T} is equal to square root of 3")
-            print(f"the ratio of the drag coefficient at minimal power on the drag coefficient at minimal thrust: {(CL_Min_P/CL_CD_Min_P )/ (CL_Min_T/CL_CD_Min_T):.0f}")
-            print(f"the ratio of the lift-to-drag ratio at minimal power on the lift-to-drag ratio at minimal thrust: {CL_CD_Min_P / CL_CD_Min_T} is equal to square root of 3/2: {np.sqrt(3)/2}")
+            print(f"the ratio of the drag coefficient at minimal power on the drag coefficient at minimal thrust: {(Cd_P )/ (CL_Min_T/CL_CD_Min_T)}")
+            print(f"the ratio of the lift-to-drag ratio at minimal power on the lift-to-drag ratio at minimal thrust: {(CL_Min_P/Cd_P) / CL_CD_Min_T} is equal to square root of 3/2: {np.sqrt(3)/2}")
             print(f"the ratio of the drag coefficient on the parasite drag coefficient at minimal thrust: {(CL_Min_T/CL_CD_Min_T) / Cd_0:.3f}")
-            print(f"the ratio of the drag coefficient on the parasite drag coefficient at minimal power.: {(CL_Min_P/CL_CD_Min_P ) / Cd_0:.3f}")
+            print(f"the ratio of the drag coefficient on the parasite drag coefficient at minimal power.: {Cd_P  / Cd_0:.3f}")
 
 
             fig, axs = plt.subplots(1, 2, figsize=(12, 5))  
@@ -82,10 +89,17 @@ def main():
 
                 Fr_min = min(Fr)
                 Pr_min = min(Pr)
-        
+                L = f.Weight_To_Lift_CalC(Mass)
                 #Calculate Minimal Speed, Table in course Note
                 V_Min_T,CL_CD_Min_T,CL_Min_T = f.Optimal_Val_Min_T(Mass*9.81,S,rho_FL0,Cd_0,k) 
                 V_Min_P,CL_CD_Min_P,CL_Min_P = f.Optimal_Val_Min_P(Mass*9.81,S,rho_FL0,Cd_0,k)
+                #-----------------
+                """
+                #CL/CD of MIN P is Cl^3/2/Cd, to get CL/CD do as follows:
+                Cd_P = Cd_0 + k *(CL_min_P)**2
+                """
+                Cd_P = f.Cd_Calc(C)
+                #-----------------
 
                 print(f"the minimum thrust required {Fr_min:.3f} N")
                 print(f"the minimum power required {Pr_min:.3f} W")
@@ -102,7 +116,7 @@ def main():
                 print(f"the ratio of the lift-to-drag ratio at minimal power on the lift-to-drag ratio at minimal thrust: {CL_CD_Min_P / CL_CD_Min_T} is equal to square root of 3/2: {np.sqrt(3)/2}")
                 print(f"the ratio of the drag coefficient on the parasite drag coefficient at minimal thrust: {(CL_Min_T/CL_CD_Min_T) / Cd_0:.3f}")
                 print(f"the ratio of the drag coefficient on the parasite drag coefficient at minimal power.: {(CL_Min_P/CL_CD_Min_P ) / Cd_0:.3f}")
-        Weights()
+        EX1()
 
 if __name__ == "__main__":
     main()

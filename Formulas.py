@@ -112,7 +112,7 @@ class f:
     # Gam is to take into account the flight path angle gamma
     # W --> L
     @staticmethod
-    def Weight_To_Lift_CalC(Mass, gam):
+    def Weight_To_Lift_CalC(Mass, gam=0):
         return Mass * f.g * np.cos(np.deg2rad(gam))
 
     #----------------------------------------------------------
