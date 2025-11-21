@@ -16,9 +16,13 @@ class f:
     @staticmethod
     def Mach_To_V_Calc(M, T):
         return M * np.sqrt(f.R * f.gamma * T)
-
     #----------------------------------------------------------
-    # Thrust = Drag
+    # TAS → Mach
+    @staticmethod
+    def V_To_Mach_Calc(V, T):
+        return V / np.sqrt(f.R * f.gamma * T)
+    #----------------------------------------------------------
+    # Thrust_required = Drag
     @staticmethod
     def Thrust_Calc(Cd, rho, V, S):
         return Cd * (0.5 * rho * V**2 * S)
@@ -47,8 +51,8 @@ class f:
     #----------------------------------------------------------
     # Optimal Values; Jet-Max Range
     @staticmethod
-    def Optimal_Val_Max_J_range(L, S, rho, CD_0, k):
-        v_min = np.sqrt((L * 2 * np.sqrt(3 * k)) / (S * rho * np.sqrt(CD_0)))
+    def Optimal_Val_Max_J_range(W, S, rho, CD_0, k):
+        v_min = np.sqrt(((W * 2) / (S * rho)) * np.sqrt(3*k/CD_0))
         CL_CD_OPT = 3 / (4 * (3 * k * CD_0**3)**0.25)
         CL_Opt = np.sqrt(CD_0 / (3 * k))
         return v_min, CL_CD_OPT, CL_Opt
@@ -56,8 +60,8 @@ class f:
     #----------------------------------------------------------
     # Optimal Values Minimal Thrust; Prop-Max Range, Jet-Max Endurance
     @staticmethod
-    def Optimal_Val_Min_T(L, S, rho, CD_0, k):
-        v_min = np.sqrt((L * 2 * np.sqrt(k)) / (S * rho * np.sqrt(CD_0)))
+    def Optimal_Val_Min_T(W, S, rho, CD_0, k):
+        v_min = np.sqrt((W * 2 * np.sqrt(k)) / (S * rho * np.sqrt(CD_0)))
         CL_CD_OPT = 1 / np.sqrt(4 * k * CD_0)
         CL_Opt = np.sqrt(CD_0 / k)
         return v_min, CL_CD_OPT, CL_Opt
