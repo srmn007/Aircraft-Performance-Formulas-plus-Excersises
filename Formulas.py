@@ -136,7 +136,10 @@ class f:
     @staticmethod
     def lbf__N(Force, x):
         return Force * (4.4482216153**x)
-
+    # lb <--> kg , x = 1 : lb -> kg
+    @staticmethod
+    def lb__kg(mass, x):
+        return mass * (0.45359237**x)
     #----------------------------------------------------------
     # mbar --> Pa
     @staticmethod
