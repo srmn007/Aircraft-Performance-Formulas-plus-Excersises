@@ -90,7 +90,7 @@ class f:
         return 1 / (np.pi * e * AR)
 
     #----------------------------------------------------------
-    # CL → TAS, gam == Flight Path Angle in degress
+    # CL → TAS, gam == Flight Path Angle in degrees
     @staticmethod
     def CL_To_V_Calc(Mass, rho, S, Cl,gam=0):
         
