@@ -47,6 +47,44 @@ class f:
     @staticmethod
     def Cd_Calc(CD_0, k, Cl):
         return CD_0 + k * (Cl**2)
+     #----------------------------------------------------------
+    @staticmethod
+    def Rate_of_Climb(Fa,mass,v,Thrust,k,gam,rho,S):
+        """
+            Computes the aircraft rate of climb (ROC).
+
+            Parameters
+            ----------
+            Fa : float
+                Available thrust [N].
+            mass : float
+                Aircraft mass [kg].
+            v : float
+                True airspeed [m/s].
+            FR : float
+                Required drag force (total drag) [N].
+            k : float
+                Induced drag factor (1/(pi*e*AR)).
+            gam : float
+                Flight path angle gamma [rad].
+            rho : float
+                Air density [kg/m^3].
+            S : float
+                Wing reference area [m^2].
+
+            Returns
+            -------
+            float
+                Rate of climb [m/s].
+            float
+                Horizontal velocity [m/s].
+            float
+                Flight path angle [deg].           
+            """
+        R_C= ((Fa*v)/(mass*9.81)) - v*((Thrust/(mass*9.81))+(2*k*mass*9.81*(np.cos(gam)**2))/(rho*S*(v**2)))
+        V_hor = np.sqrt(v**2-R_C**2)
+        gamma = np.rad2deg(np.asin(R_C/v))
+        return R_C ,V_hor,gamma
     #----------------------------------------------------------
     @staticmethod
     def calculate_jet_range(W,S,TSFC_N,CD_0, k, rho, mass_f):
