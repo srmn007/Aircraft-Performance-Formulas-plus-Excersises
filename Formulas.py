@@ -31,17 +31,33 @@ class f:
     # Thrust --> V
     @staticmethod
     def Thrust_To_V(Thrust, Cd, rho, S):
-        return np.sqrt((2 * Thrust) / (S * Cd))
+
+        return np.sqrt((2 * Thrust) / (rho* S * Cd))
 
     #----------------------------------------------------------
     # Lift + Drag → Aerodynamic resultant
     @staticmethod
     def Aero_Force_Resultant(L, D):
-        """Lift + Drag → Aerodynamic resultant"""
+        """
+        Lift + Drag → Aerodynamic resultant
+        """
         Res = np.sqrt(L**2 + D**2)
         Theta = np.degrees(np.atan(D / L))
         return Res, Theta
-
+    #----------------------------------------------------------
+    @staticmethod
+    def V_Stall_In_Climb(W,gam,rho,S,CL_max):
+        """
+            Parameters:
+            W : Weight (N)
+            gam ; flight path Angle (deg)
+            rho: density
+            CL_max : Max lift coefficient
+            
+            Returns 
+            V stall (m/s)
+        """
+        return np.sqrt((2*W*np.cos(np.deg2rad(gam)))/(rho*S*CL_max))
     #----------------------------------------------------------
     # Drag coefficient from CD0 + k CL²
     @staticmethod
@@ -66,7 +82,7 @@ class f:
             k : float
                 Induced drag factor (1/(pi*e*AR)).
             gam : float
-                Flight path angle gamma [rad].
+                Flight path angle gamma [deg].
             rho : float
                 Air density [kg/m^3].
             S : float
@@ -81,10 +97,10 @@ class f:
             float
                 Flight path angle [deg].           
             """
-        R_C= ((Fa*v)/(mass*9.81)) - v*((Thrust/(mass*9.81))+(2*k*mass*9.81*(np.cos(np.deg2rad(gam))**2))/(rho*S*(v**2)))
-        V_hor = np.sqrt(v**2-R_C**2)
+        R_C= ((Fa*v)/(mass*9.81)) - v*((Thrust/(mass*9.81)) + (2*k*mass*9.81*(np.cos(np.deg2rad(gam))**2))/(rho*S*(v**2)))
+        V_hor = np.sqrt(v**2- R_C**2)
         gamma = np.rad2deg(np.asin(R_C/v))
-        return R_C ,V_hor,gamma
+        return R_C , V_hor, gamma
     #----------------------------------------------------------
     @staticmethod
     def calculate_jet_range(W,S,TSFC_N,CD_0, k, rho, mass_f):
