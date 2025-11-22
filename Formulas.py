@@ -65,7 +65,7 @@ class f:
         return CD_0 + k * (Cl**2)
      #----------------------------------------------------------
     @staticmethod
-    def Rate_of_Climb(Fa,mass,v,Thrust,k,gam,rho,S):
+    def Rate_of_Climb(Fa,mass,v,CD_0,k,gam,rho,S):
         """
             Computes the aircraft rate of climb (ROC).
 
@@ -78,7 +78,7 @@ class f:
             v : float
                 True airspeed [m/s].
             FR : float
-                Required drag force (total drag) [N].
+                Required drag force (total drag) for CD_0 [N].
             k : float
                 Induced drag factor (1/(pi*e*AR)).
             gam : float
@@ -97,8 +97,8 @@ class f:
             float
                 Flight path angle [deg].           
             """
-        R_C= ((Fa*v)/(mass*9.81)) - v*((Thrust/(mass*9.81)) + (2*k*mass*9.81*(np.cos(np.deg2rad(gam))**2))/(rho*S*(v**2)))
-        V_hor = np.sqrt(v**2- R_C**2)
+        R_C= ((Fa*v)/(mass*9.81)) - v*(((CD_0*0.5*rho*S*v**2)/(mass*9.81)) + (2*k*mass*9.81*np.cos(np.deg2rad(gam))**2)/(rho*S*(v**2)))
+        V_hor = np.sqrt(v**2 - R_C**2)
         gamma = np.rad2deg(np.asin(R_C/v))
         return R_C , V_hor, gamma
     #----------------------------------------------------------
