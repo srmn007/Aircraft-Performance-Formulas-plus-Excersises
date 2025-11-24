@@ -97,9 +97,9 @@ class f:
             float
                 Flight path angle [deg].           
             """
-        R_C= ((Fa*v)/(mass*9.81)) - v*(((CD_0*0.5*rho*S*v**2)/(mass*9.81)) + (2*k*mass*9.81*np.cos(np.deg2rad(gam))**2)/(rho*S*(v**2)))
+        R_C= ((Fa*v)/(mass*9.81)) - v*(((CD_0*0.5*rho*S*v**2)/(mass*9.81)) + (2*k*mass*9.81*(np.cos(gam)**2))/(rho*S*(v**2)))
         V_hor = np.sqrt(v**2 - R_C**2)
-        gamma = np.rad2deg(np.asin(R_C/v))
+        gamma = np.asin(R_C/v)
         return R_C , V_hor, gamma
     #----------------------------------------------------------
     @staticmethod
