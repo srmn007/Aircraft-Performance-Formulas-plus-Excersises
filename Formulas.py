@@ -174,6 +174,19 @@ class f:
         CL_OPT = np.sqrt((3 * CD_0) / k)
         return v_min, CL_CD_OPT, CL_OPT
 
+     #----------------------------------------------------------
+    @staticmethod
+    def liftoff_Speed(W,rho,S,CL_max_TO):
+        """
+        Lift of speed:
+        Parameters: 
+        W :Aircraft weight [Newtons or pounds-force]. 
+        rho : float Air density [kg/m³]. 
+        S : float Wing reference area [m² ].
+        CL_max_TO : float Maximum lift coefficient during takeoff (dimensionless).
+        """
+
+        return 1.2 *np.sqrt((2*W)/(rho*S*CL_max_TO))
     #----------------------------------------------------------
     # Density from ISA
     @staticmethod
@@ -306,3 +319,229 @@ class f:
             rho = f.get_isa_density(p, T)
 
         return p, T, rho
+    
+    @staticmethod
+    def liftoff_speed(W, rho, S, CL_max_TO):
+        """
+        Compute the liftoff speed for takeoff.
+
+        Parameters
+        ----------
+        W : float
+            Aircraft weight (N).
+        rho : float
+            Air density (kg/m^3).
+        S : float
+            Wing reference area (m^2).
+        CL_max_TO : float
+            Maximum lift coefficient in takeoff configuration.
+
+        Returns
+        -------
+        float
+            Liftoff speed V_lo (m/s).
+        """
+        return np.sqrt((2 * W) / (rho * S * CL_max_TO))
+    @staticmethod
+    def ground_roll(W, V_lo, vw, FA, mu_r, phi, Cd, Cl, rho, S):
+        """
+        Compute the ground-roll distance, average acceleration, and time.
+
+        Parameters
+        ----------
+        W : float
+            Aircraft weight (N).
+        V_lo : float
+            Liftoff speed (m/s).
+        vw : float
+            Headwind (+) or tailwind (–) component (m/s).
+        FA : float
+            Available thrust (N).
+        mu_r : float
+            Rolling friction coefficient.
+        phi : float
+            Runway upslope angle (rad). (positive = uphill)
+        Cd : float
+            Drag coefficient in takeoff configuration.
+        Cl : float
+            Lift coefficient used for ground roll.
+        rho : float
+            Air density (kg/m^3).
+        S : float
+            Wing reference area (m^2).
+
+        Returns
+        -------
+        sg : float
+            Ground roll distance (m).
+        ag : float
+            Average acceleration during ground roll (m/s²).
+        tg : float
+            Time to liftoff speed (s).
+        """
+        q_lo = 0.5 * rho * S * (V_lo / np.sqrt(2))**2
+
+        sg = (W * (V_lo - vw)**2) / (
+            2 * 9.81 * ((FA - mu_r * W) - W * phi - (Cd - mu_r * Cl) * q_lo)
+        )
+
+        ag = (V_lo - vw)**2 / (2 * sg)
+        tg = (V_lo - vw) / ag
+
+        return sg, ag, tg
+    @staticmethod
+    def rotation_distance(V_lo, t_rot):
+        """
+        Distance covered during rotation phase.
+
+        Parameters
+        ----------
+        V_lo : float
+            Liftoff speed (m/s).
+        t_rot : float
+            Rotation duration (s).
+
+        Returns
+        -------
+        float
+            Rotation distance (m).
+        """
+        return V_lo * t_rot
+    @staticmethod
+    def delta_CL_transition(V_lo, V_stall, CL_max_TO):
+        """
+        Compute the increase in lift coefficient during transition from rotation
+        to climb.
+
+        Parameters
+        ----------
+        V_lo : float
+            Liftoff speed (m/s).
+        V_stall : float
+            Stall speed at climb configuration (m/s).
+        CL_max_TO : float
+            Maximum lift coefficient in takeoff configuration.
+
+        Returns
+        -------
+        float
+            ΔCL during the transition.
+        """
+        v_ratio = V_lo**2 / V_stall**2
+        return 0.5 * (v_ratio - 1) * (CL_max_TO * (1/v_ratio - 0.53) + 0.38)
+    @staticmethod
+    def transition_arc(W, S, rho, dCL, FA, Fr, V_lo):
+        """
+        Compute transition arc radius, climb angle, arc distance, height gained,
+        and time to complete the transition.
+
+        Parameters
+        ----------
+        W : float
+            Aircraft weight (N).
+        S : float
+            Wing area (m^2).
+        rho : float
+            Air density (kg/m^3).
+        dCL : float
+            Increment in lift coefficient during transition.
+        FA : float
+            Available thrust (N).
+        Fr : float
+            Drag force at liftoff speed (N).
+        V_lo : float
+            Liftoff speed (m/s).
+
+        Returns
+        -------
+        Radius : float
+            Radius of transition arc (m).
+        gamma : float
+            Climb angle (rad).
+        s_trans : float
+            Horizontal distance covered in transition (m).
+        h_trans : float
+            Height gained in transition (m).
+        t_trans : float
+            Time to complete transition (s).
+        """
+        Radius = (2 * W) / (S * rho * 9.81 * dCL)
+        gamma = np.asin((FA - Fr) / W)
+
+        s_trans = Radius * np.sin(gamma)
+        h_trans = Radius - Radius * np.cos(gamma)
+        t_trans = (gamma * Radius) / V_lo
+
+        return Radius, gamma, s_trans, h_trans, t_trans
+    @staticmethod
+    def climb_to_obstacle(h_obstacle, h_transition, gamma, V_lo, tg):
+        """
+        Compute the climb distance & time needed after transition arc
+        to clear a given obstacle height.
+
+        Parameters
+        ----------
+        h_obstacle : float
+            Obstacle height to clear (m).
+        h_transition : float
+            Height after end of transition (m).
+        gamma : float
+            Climb angle (rad).
+        V_lo : float
+            Airspeed during climb (m/s).
+        tg : float
+            Ground roll time (s), used in FAA/AIAA climb time models.
+
+        Returns
+        -------
+        s_climb : float
+            Additional ground distance to clear obstacle (m).
+        t_climb : float
+            Time to clear obstacle (s).
+        """
+        if h_obstacle <= h_transition:
+            return 0.0, 0.0
+
+        s_climb = (h_obstacle - h_transition) / (tg * gamma)
+        t_climb = s_climb / (np.cos(gamma) * V_lo)
+
+        return s_climb, t_climb
+
+
+    # ---------------------------------------------------------------------
+    # 7. Total Takeoff Distance and Time
+    # ---------------------------------------------------------------------
+    @staticmethod
+    def total_takeoff(sg, sr, s_trans, s_climb, tg, t_rot, t_trans, t_climb):
+        """
+        Aggregate all distances and times to compute total takeoff performance.
+
+        Parameters
+        ----------
+        sg : float
+            Ground roll distance (m).
+        sr : float
+            Rotation distance (m).
+        s_trans : float
+            Transition arc horizontal distance (m).
+        s_climb : float
+            Additional climb distance to clear obstacle (m).
+        tg : float
+            Ground roll time (s).
+        t_rot : float
+            Rotation time (s).
+        t_trans : float
+            Transition time (s).
+        t_climb : float
+            Additional climb time (s).
+
+        Returns
+        -------
+        S_total : float
+            Total takeoff distance (m).
+        T_total : float
+            Total takeoff time (s).
+        """
+        S_total = sg + sr + s_trans + s_climb
+        T_total = tg + t_rot + t_trans + t_climb
+        return S_total, T_total
