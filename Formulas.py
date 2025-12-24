@@ -320,28 +320,7 @@ class f:
 
         return p, T, rho
     
-    @staticmethod
-    def liftoff_speed(W, rho, S, CL_max_TO):
-        """
-        Compute the liftoff speed for takeoff.
-
-        Parameters
-        ----------
-        W : float
-            Aircraft weight (N).
-        rho : float
-            Air density (kg/m^3).
-        S : float
-            Wing reference area (m^2).
-        CL_max_TO : float
-            Maximum lift coefficient in takeoff configuration.
-
-        Returns
-        -------
-        float
-            Liftoff speed V_lo (m/s).
-        """
-        return np.sqrt((2 * W) / (rho * S * CL_max_TO))
+    
     @staticmethod
     def ground_roll(W, V_lo, vw, FA, mu_r, phi, Cd, Cl, rho, S):
         """
